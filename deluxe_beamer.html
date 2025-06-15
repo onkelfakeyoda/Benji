@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Deluxe Beamer Interface</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      /* Grundlayout */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(120deg, #000, #222);
+        overflow: hidden;
+        color: #fff;
+      }
+
+      /* Animierter Hintergrund */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 200%;
+        height: 200%;
+        background:
+          radial-gradient(
+            circle at 30% 30%,
+            rgba(255, 215, 0, 0.4),
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 70% 70%,
+            rgba(255, 0, 255, 0.3),
+            transparent 60%
+          );
+        animation: moveBg 20s linear infinite;
+        z-index: -1;
+      }
+
+      @keyframes moveBg {
+        from {
+          transform: translate(-25%, -25%) scale(1);
+        }
+        to {
+          transform: translate(-50%, -50%) scale(1.2);
+        }
+      }
+
+      /* Intro */
+      #intro {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.9);
+        animation: fadeOut 5s forwards;
+      }
+      @keyframes fadeOut {
+        0%,
+        80% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          display: none;
+        }
+      }
+
+      #logo {
+        font-size: 6vw;
+        font-weight: bold;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        animation:
+          spin 6s linear infinite,
+          glow 2s ease-in-out infinite alternate;
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes glow {
+        from {
+          text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+        }
+        to {
+          text-shadow: 0 0 30px rgba(255, 215, 0, 1);
+        }
+      }
+
+      /* Hauptbereich */
+      #main {
+        display: none;
+        opacity: 0;
+        animation: fadeIn 1s forwards 5s;
+        height: 100%;
+        position: relative;
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          display: block;
+        }
+      }
+
+      #top {
+        position: absolute;
+        top: 2vh;
+        width: 100%;
+        text-align: center;
+      }
+
+      #time {
+        font-size: 4vw;
+        letter-spacing: 0.05em;
+      }
+
+      #weather {
+        position: absolute;
+        top: 10vh;
+        right: 5vw;
+        font-size: 2vw;
+        text-align: right;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+      }
+
+      /* Zentrales Element */
+      #center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3vw;
+        text-align: center;
+        animation: pulse 3s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.7;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="intro">
+      <div id="logo">DeluxeVonInnen</div>
+    </div>
+    <div id="main">
+      <div id="top">
+        <div id="time">--:--:--</div>
+        <div id="weather">Wetter: lade…</div>
+      </div>
+      <div id="center">Willkommen</div>
+    </div>
+    <script>
+      function updateTime() {
+        const now = new Date();
+        const h = now.getHours().toString().padStart(2, "0");
+        const m = now.getMinutes().toString().padStart(2, "0");
+        const s = now.getSeconds().toString().padStart(2, "0");
+        document.getElementById("time").textContent = `${h}:${m}:${s}`;
+      }
+      setInterval(updateTime, 1000);
+      updateTime();
+
+      fetch(
+        "https://api.open-meteo.com/v1/forecast?latitude=49.9&longitude=10.2&current_weather=true&timezone=Europe/Berlin",
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          const w = data.current_weather;
+          const temp = w.temperature.toFixed(1);
+          const cond = w.weathercode;
+          document.getElementById("weather").textContent =
+            `Wetter: ${temp}\u00A0\u00B0C \u2022 Code ${cond}`;
+        })
+        .catch(() => {
+          document.getElementById("weather").textContent =
+            "Wetter: nicht verf\u00fcgbar";
+        });
+    </script>
+  </body>
+</html>

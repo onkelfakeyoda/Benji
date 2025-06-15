@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<title>Deluxe Beamer</title>
+<style>
+  body {
+    background:black;
+    color:#ffd700;
+    font-family:Arial, sans-serif;
+    text-align:center;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    margin:0;
+  }
+  #title {
+    font-size:4vw;
+    animation: glow 3s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0%,100% { text-shadow:0 0 10px #fff,0 0 20px #ffd700,0 0 30px #ffd700; }
+    50% { text-shadow:0 0 20px #fff,0 0 30px #ff8c00,0 0 40px #ff8c00; }
+  }
+  #clock {
+    font-size:2vw;
+    margin-top:1em;
+  }
+  #quote {
+    font-size:1.5vw;
+    margin-top:1em;
+  }
+</style>
+</head>
+<body>
+  <div id="title">Deluxe von innen</div>
+  <div id="clock"></div>
+  <div id="quote"></div>
+  <audio id="music" src="musik.mp3" autoplay loop></audio>
+<script>
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  const quotes = [
+    'Deluxe ist kein Status, sondern ein Zustand.',
+    'Fühl den Beat, lebe das Licht.',
+    'Dein Glanz kommt von innen.'
+  ];
+  let qi = 0;
+  function showQuote() {
+    document.getElementById('quote').textContent = quotes[qi];
+    qi = (qi + 1) % quotes.length;
+  }
+  setInterval(showQuote, 5000);
+  showQuote();
+</script>
+</body>
+</html>
